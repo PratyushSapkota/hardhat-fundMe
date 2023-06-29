@@ -4,7 +4,9 @@ const { ethers } = require("hardhat")
 describe("FundMe", async function () {
     let fundMe
     let mockV3Aggregator
-    const sendValue = 1 * 10 ** 18
+    // const sendValue = (1 * 10 ** 18)
+    const sendValue = ethers.parseEther("1000.0")
+    console.log(sendValue)
     let deployerAddress
 
     beforeEach(async function () {
@@ -12,8 +14,9 @@ describe("FundMe", async function () {
         await mockV3Aggregator.waitForDeployment()
         fundMe = await ethers.deployContract("FundMe", [mockV3Aggregator.target])
         await fundMe.waitForDeployment()
-        let [signer] = await ethers.getSigner()
-        deployerAddress = signer.address
+        
+        let [signer] = await ethers.getSigners()
+        deployerAddress = signer.getAddress()
         
     })
 
@@ -21,7 +24,6 @@ describe("FundMe", async function () {
         it("Sets the aggregator address correctly", async function () {
             const response = await fundMe.priceFeed()
             assert.equal(response, mockV3Aggregator.target)
-
         })
     })
 
@@ -31,10 +33,11 @@ describe("FundMe", async function () {
         })
 
         it("Updates the amount funded mapping thing", async function () {
-            await fundMe.fund({ value: sendValue })
-            const response = await fundMe.addressToAmountFunded(deployerAddress)
 
-            assert.equal(response.toString(), sendValue.toString())
+            await fundMe.fund({ value: sendValue })
+            const getAmountFunded = await fundMe.addressToAmountFunded(deployerAddress)
+
+            assert.equal(getAmountFunded, sendValue)
         })
     })
 

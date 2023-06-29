@@ -13,7 +13,7 @@ contract FundMe {
     address[] public funders;
 
     address public i_owner;
-    uint256 public constant MINIMUM_USD = 10 * 10 ** 18;
+    uint256 public constant MINIMUM_USD = 1 * 1e18;
 
     AggregatorV3Interface public priceFeed;
 
